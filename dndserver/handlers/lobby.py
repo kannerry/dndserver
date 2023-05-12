@@ -4,6 +4,7 @@ from dndserver.models import Character
 from dndserver.objects.party import Party
 from dndserver.persistent import parties, sessions
 from dndserver.protos import PacketCommand as pc
+from dndserver.protos.Character import SACCOUNT_NICKNAME
 from dndserver.protos.Account import SC2S_LOBBY_ENTER_REQ, SS2C_LOBBY_ENTER_RES
 from dndserver.protos.Lobby import (
     SC2S_CHARACTER_SELECT_ENTER_REQ,
@@ -14,6 +15,12 @@ from dndserver.protos.Lobby import (
     SS2C_LOBBY_GAME_DIFFICULTY_SELECT_RES,
     SS2C_LOBBY_REGION_SELECT_RES,
     SS2C_OPEN_LOBBY_MAP_RES,
+)
+
+from dndserver.protos.InGame import (
+    SC2S_AUTO_MATCH_REG_REQ,
+    SS2C_AUTO_MATCH_REG_RES,
+    SS2C_ENTER_GAME_SERVER_NOT
 )
 
 
@@ -72,3 +79,18 @@ def open_map_select(ctx, msg):
     req.ParseFromString(msg)
     res = SS2C_OPEN_LOBBY_MAP_RES()
     return res
+
+def register_auto_match_request(ctx, msg):
+    """ Unfinished. """
+    req = SC2S_AUTO_MATCH_REG_REQ()
+    req.ParseFromString(msg)
+    ctx.reply(SS2C_AUTO_MATCH_REG_RES(result=pc.SUCCESS))
+    res = SS2C_ENTER_GAME_SERVER_NOT(
+        port = 25565,
+        ip = "127.0.0.1",
+        sessionId = "0",
+        accountId = "0",
+        isReconnect = 0,
+        nickName = SACCOUNT_NICKNAME()
+    )
+    return res # Thank you Krofty!
